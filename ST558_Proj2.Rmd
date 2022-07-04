@@ -1,5 +1,5 @@
 ---
-title: "Analysis of the Online NEws Popularity Dataset"
+title: "Analysis of the Online News Popularity Dataset"
 author: "Suprotik Debnath and Michael Lightfoot"
 header-includes:
 - \usepackage{amsgen,amsmath,amstext,amsbsy,amsopn,amssymb,mathabx,amsthm,bm,bbm}
@@ -43,7 +43,7 @@ We will utilize various methods to model the response, including random forest, 
 
 ### Data
 
-First, we will read in the data. Then, we will subset the data based on the variable of interest. We will also remove the `url` and `timedelta` variables for the sake of our analysis as those are non-predictive.
+First, we will read in the data. Then, we will subset the data based on the variable of interest. We are going to create a new categorical variable called `weekday` that merges all the `weekday_is` variables and labels articles by what day they were published. We will also remove the `url` and `timedelta` variables for the sake of our analysis as those are non-predictive.
 
 ```{r, eval = T, message = F}
 library(readr)
@@ -54,21 +54,50 @@ data <- read_csv("OnlineNewsPopularity/OnlineNewsPopularity.csv")
 data <- as_tibble(data)
 
 #Subset data
-data <- data %>%
-  filter(data$data_channel_is_lifestyle == 1) %>%
-  select(n_tokens_title:shares) 
+data_life <- data %>%
+  filter(data$data_channel_is_lifestyle == 1) %>% 
+  mutate(weekday = case_when(weekday_is_monday == "1" ~ "Monday", 
+                             weekday_is_tuesday == "1" ~ "Tuesday",
+                             weekday_is_wednesday == "1" ~ "Wednesday", 
+                             weekday_is_thursday == "1" ~ "Thursday",
+                             weekday_is_friday == "1" ~ "Friday",
+                             weekday_is_saturday == "1" ~ "Saturday",
+                             weekday_is_sunday == "1" ~ "Sunday")) %>%
+  select(-c(url, timedelta, weekday_is_monday, weekday_is_tuesday, weekday_is_wednesday, weekday_is_thursday, weekday_is_friday, weekday_is_saturday, weekday_is_sunday, is_weekend)) 
 ```
-
 
 ### Summarizations
 
 We will create some summary statistics and plots to help us understand our data.
+```{r}
+summary(data_life$shares)
+```
 
+```{r}
+data_life %>% group_by(weekday) %>% summarise(avg = round(mean(shares)), med = median(shares), var = round(var(shares)))
+```
 
 ```{r, eval = T}
 library(ggplot2)
-plot1 <- ggplot(data, aes(x = n_tokens_content, y = shares, color = global_sentiment_polarity)) + geom_point()
+library(ggpubr)
+library(scales)
+plot1 <- ggplot(data_life, aes(x = n_tokens_content, y = shares, color = global_sentiment_polarity)) + geom_point()
 plot1
+```
+
+```{r}
+plot2 <- ggplot(data_life, aes(x=weekday, y=shares, fill=weekday)) + geom_bar(stat='identity') +  scale_y_continuous(labels = scales::comma) + ggtitle("Number of Shares by Day") + xlab("Weekday") + ylab("Number of Shares")  + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
+plot2
+```
+
+```{r}
+plot3 <- ggplot(data_life, aes(x=kw_avg_avg, y=shares, color=weekday)) + geom_point(stat='identity') + ggtitle("Avg Keyword by Shares") + xlab("Average Keyword") + ylab("Shares") + theme(plot.title = element_text(hjust = 0.5))
+plot3
+```
+
+```{r}
+plot4 <- ggplot(data_life, aes(x=shares)) + geom_histogram() + ggtitle("Total Shares Spread") + xlab("Shares") + ylab("Count") + theme(plot.title = element_text(hjust = 0.5))
+plot4
 ```
 
 
