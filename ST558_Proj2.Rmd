@@ -43,21 +43,25 @@ We will utilize various methods to model the response, including random forest, 
 
 ## Data
 
-First, we will read in the data. Then, we will subset the data based on the variable of interest. We are going to create a new categorical variable called `weekday` that merges all the `weekday_is` variables and labels articles by what day they were published. We will also remove the `url` and `timedelta` variables for the sake of our analysis as those are non-predictive.
+First, we will read in the data. Then, we will subset the data based on the variable of interest, and then remove those variables from our analysis. We are going to create a new factored variable called `weekday` that merges all the `weekday_is` variables and labels articles by what day they were published. We will also remove the `url` and `timedelta` variables for the sake of our analysis as those are non-predictive.
 
 ```{r, eval = T, message = F}
+#Import packages
 library(readr)
 library(tidyverse)
 library(ggplot2)
 library(ggpubr)
 library(scales)
 library(caret)
+library(knitr)
+library(rmarkdown)
+library(dplyr)
 
 #Read in data 
 data <- read_csv("OnlineNewsPopularity/OnlineNewsPopularity.csv")
-data <- as_tibble(data)
+data <- na.omit(as_tibble(data))
 
-#Subset data
+#Create new variables and remove non-needed variables
 subdata <- data %>%
   mutate(
     weekday = case_when(
@@ -99,90 +103,370 @@ subdata <- data %>%
     )
   )
 
-data_life <- subdata %>% filter(channel == "Lifestyle")
-data_life
-```
+#Now, we subset our data based on the channel of interest
+data_life <- subdata %>% filter(channel == params$channel)
 
+#Let's make sure our weekday variable is a factor so it can be 
+#used in our analysis
+data_life$weekday <- as.factor(data_life$weekday)
+
+#Since we have already subset the data, let's remove the channel variable
+data_life <- data_life %>% select(-channel)
+```
 
 
 ## Summarizations
 
-### Summary Statistics
-
-We will create some summary statistics and plots to help us understand our data.
-```{r}
-summary(data_life$shares)
-```
-
-Correlation matrix of shares to variables
-```{r}
-cor((data_life[, unlist(lapply(data_life, is.numeric))]), data_life$shares)   
-```
-
-Print out table of summary statistics by `weekday`
-```{r}
-data_life %>% group_by(weekday) %>% summarise(avg = round(mean(shares)), med = median(shares), var = round(var(shares)))
-```
-
-### Summary Plots
+We will create some summary statistics and plots to help us understand our data. To get an idea of our response variable, let's look at the distribution of `shares`.
 
 ```{r, eval = T}
-plot1 <- ggplot(data_life, aes(x = n_tokens_content, y = shares, color = global_sentiment_polarity)) + geom_point()
+stats1 <- data_life %>% 
+  select(shares) %>% 
+  summarise(avg = round(mean(shares)), 
+            med = median(shares), 
+            sd = round(sd(shares)))
+kable(stats1, "simple", 
+      col.names = c("Average", "Median", "Std Dev"))
+```
+
+This helps us understand the number of shares an article within this channel needs to be considered above average, and so forth. 
+
+Let's visualize this distribution of `shares`.
+
+```{r, fig.width=6, fig.height=3}
+plot1 <- ggplot(data_life, aes(x=shares)) + 
+  geom_histogram(alpha = 0.5, aes(y = ..density..), bins = 100, boundary = 0) + 
+  geom_density(alpha = 0.5, kernel = "gaussian", position = "stack") +
+  ggtitle("Total Distribution of Shares") + 
+  xlab("Shares") + 
+  ylab("Density") + 
+  theme(plot.title = element_text(hjust = 0.5))
 plot1
 ```
 
-```{r}
-plot2 <- ggplot(data_life, aes(x=weekday, y=shares, fill=weekday)) + geom_bar(stat='identity') +  scale_y_continuous(labels = scales::comma) + ggtitle("Number of Shares by Day") + xlab("Weekday") + ylab("Number of Shares")  + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
+Looking at the width and height of the peak(s) of this plot can help us understand the distribution of `shares` a bit better.
+
+Our exploratory data analysis may benefit from a categorical variable that splits article into categories based on their number of shares compared to the mean. Let's create that variable.
+
+```{r, eval = T}
+data_life$shares_cat <- ifelse(data_life$shares <= stats1$avg, 
+                              "Below Average", 
+                              "Above Average")
+```
+
+Now, let us look at these same summary statistics of `shares` grouped by the `weekday` variable. 
+
+```{r, eval = T}
+stats2 <- data_life %>% 
+  group_by(weekday) %>% 
+  summarise(avg = round(mean(shares)), 
+            med = median(shares), 
+            sd = round(sd(shares)))
+kable(stats2, "simple",
+      col.names = c("Weekday", "Average", "Median", "Std Dev"))
+```
+Here we are looking to see if certain days have significantly different statistics than the overall statistics for `shares` that we observed above. These statistical summaries by `weekday` may benefit from the context of how many articles with above and below average numbers of shares were released on each day. Let's look at that as well.
+
+```{r, eval = T}
+stats3 <- table(data_life$weekday, data_life$shares_cat)
+stats3
+kable(stats3, "simple")
+```
+
+Here we are looking to see if there are vastly different numbers of articles in either category released on certain days than others. Let's look at a plot of `shares` by `weekday` to help us visualize this relationship better.
+
+```{r, eval = T}
+plot2 <- ggplot(data_life, aes(x=weekday, y=shares, fill=shares_cat)) + 
+  geom_bar(stat='identity') +  
+  ggtitle("Number of Total Shares by Day") +
+  xlab("Weekday") + 
+  ylab("Shares")  + 
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  labs(fill = "Shares Category")
 plot2
 ```
 
-```{r}
-plot3 <- ggplot(data_life, aes(x=kw_avg_avg, y=shares, color=weekday)) + geom_point(stat='identity') + ggtitle("Avg Keyword by Shares") + xlab("Average Keyword") + ylab("Shares") + theme(plot.title = element_text(hjust = 0.5))
+Again, we are looking for weekdays that have much higher or lower numbers of shares than other days to help confirm if `weekday` might be a solid predictor for our models. 
+
+Now let's look at the correlations between our `shares` variable and the other numerical variables within our dataset.
+
+```{r, eval = T}
+cor <- cor((data_life[, unlist(lapply(data_life, is.numeric))]), data_life$shares)   
+cor <- data.frame(Correlation=cor)
+cor <- cor %>%
+  arrange(desc(Correlation))
+
+kable(cor, "simple")
+```
+
+Of course, the shares variable has a perfect correlation with itself. What we are looking for here are the other variables with strong correlations (positive or negative) as those could be solid predictors for the `shares` variable. 
+
+
+Let's visualize the relationship between some of these numerical variables and `shares`. First, let's look at `shares` versus the number of words in the content of each article, colored by the text sentiment polarity.
+
+```{r, eval = T}
+plot3 <- ggplot(data_life, aes(x = n_tokens_content, y = shares, color = global_sentiment_polarity)) + 
+  geom_point() + 
+  xlab("Words in the Content") + 
+  ylab("Shares") + 
+  ggtitle("Number of Shares vs Number of Words in the Content")  + 
+  labs(color = "Text Sentiment Polarity") +
+  theme(plot.title = element_text(hjust = 0.5))
 plot3
 ```
 
-```{r}
-plot4 <- ggplot(data_life, aes(x=shares)) + geom_histogram() + ggtitle("Total Shares Spread") + xlab("Shares") + ylab("Count") + theme(plot.title = element_text(hjust = 0.5))
+Here, we are looking for trends in the scatter plot along with potential clusters of different clusters to help us decipher if these numerical variables will be strong predictors of `shares`. 
+
+Now let's visualize the relationship between `shares` and the number of videos in each article, colored by the text subjectivity.
+
+```{r, eval = T}
+plot4 <- ggplot(data_life, aes(x=num_videos, y=shares, color=global_subjectivity)) + 
+  geom_point() + 
+  ggtitle("Number of Shares vs Number of Videos") + 
+  xlab("Videos") + 
+  ylab("Shares") + 
+  labs(color = "Text Subjectivity") +
+  theme(plot.title = element_text(hjust = 0.5))
 plot4
 ```
 
+We are looking for similar indicators as the previous plot: trends in the scatter plot and clusters of certain colors that show dependence of `shares` on these variables.
 
+Now let's take a different visualization approach and look at the distribution of the number of images, colored by if the articles have above or below the average number of shares.
+
+```{r, eval = T}
+plot5 <- ggplot(data_life, aes(x = num_imgs, fill = shares_cat)) + 
+  geom_histogram(alpha = 0.5, aes(y = ..density..), bins = 30, boundary = 0) + 
+  geom_density(alpha = 0.5, position = "stack") +
+  labs(title = "Distributions of the Number of Images per Article within Shares Categories",
+       x = "Images",
+       y = "Density",
+       fill = "Shares Category")
+plot5
+```
+
+To see if the number of images is a significant predictor of `shares`, we are looking for a large difference in the density curves for the two categories. Let's perform this same visualization with the number of links per article.
+
+```{r, eval = T}
+plot6 <- ggplot(data_life, aes(x = num_hrefs, fill = shares_cat)) + 
+  geom_histogram(alpha = 0.5, aes(y = ..density..), bins = 30, boundary = 0) + 
+  geom_density(alpha = 0.5, position = "stack") +
+  labs(title = "Distributions of the Number of Links per Article within Shares Categories",
+       x = "Links",
+       y = "Density",
+       fill = "Shares Category")
+plot6
+```
+
+Again, we are looking to see if the density curves of this variable are vastly different between the different categories of `shares`.
+
+Lastly, a more helpful analysis may be to group our data by these categories of `shares` and create some summary statistics. Let's consider some variables we have yet to explore: the average length of words in the context as well as the number of keywords.
+
+```{r, eval = T, message = F}
+stats4 <- data_life %>% 
+  group_by(shares_cat) %>% 
+  summarise(avg = round(mean(average_token_length), digits = 3), 
+            med = median(average_token_length), 
+            sd = round(sd(average_token_length), digits = 3))
+kable(stats4, "simple", 
+      col.names = c("Shares Category", "Average", "Median", "Std Dev"))
+```
+
+We are looking to see if the summary statistics in each category here are vastly different in order to determine if the average length of words in an article is a good predictor of `shares`. 
+
+```{r, eval = T, message = F}
+stats5 <- data_life %>% 
+  group_by(shares_cat) %>% 
+  summarise(avg = round(mean(num_keywords), digits = 3), 
+            med = median(num_keywords), 
+            sd = round(sd(num_keywords), digits = 3))
+kable(stats5, "simple", 
+      col.names = c("Shares Category", "Average", "Median", "Std Dev"))
+```
+
+Again, here we could claim the number of key words in an article could be a solid predictor of `shares` if these summary statistics vary drastically between these categories.
+
+Also, let's not forget to get rid of that categorical variable we made before we start building our models!
+
+```{r, eval = T}
+data_life <- data_life %>%
+  select(-shares_cat)
+```
 
 ## Modeling
 
-First, let's create the testing and training data needed to generate ensemble models. We are going to be using a 70/30 split for the data.
+First, let's create the testing and training data needed to generate our models. We will be using a 70/30 training and testing split of our data.
+
 ```{r}
-train <- sample(1:nrow(data_life), size=nrow(data_life)*0.7)
-test <- dplyr::setdiff(1:nrow(data_life), train)
-LifeTrain <- data_life[train, ]
-LifeTest <- data_life[test, ]
+set.seed(123)
+train <- sample(1:nrow(data_life), size = nrow(data_life)*0.7)
+test <- setdiff(1:nrow(data_life),train)
+
+train_life <- data_life[train, ]
+test_life <- data_life[test, ]
 ```
 
-After splitting the data, we will be creating four unique models: two with linear regression and two ensemble models. 
+After splitting the data, we will be creating four unique models: two linear regression models and two ensemble models. 
+
 
 ### Four Fitted Models
 
 A Linear Regression model measures the relationship between a number of predictors `x` and a dependent variable `y`. In simple linear regression, only one predictor variable is used. However, in more complex modeling using multiple linear regression, we use either polynomial regression to fit higher order terms or focusing on main/interaction effects and max combinations.
-```{r}
-mlrfit1 <- train(shares ~ kw_avg_avg + num_videos + num_imgs + num_videos*num_imgs, data = LifeTrain, method = "lm", trControl = trainControl(method = "cv", number = 5))
-mlrfit1
-```
+
+For an accurate comparison, we will utilize 5-fold cross-validation for each model. We will pick the model with the lowest RMSE when applied to the test data. 
+
+Our first linear regression model is as follows:
+
+E(*Shares*) = $\beta_0$ + $\beta_1 \times$(*Average Keywords*) + $\beta_2 \times$(*Number of Images*) + $\beta_3 \times$(*Number of Videos*) + $\beta_4 \times$(*Number of Videos*)$\times$(*Number of Images*)
 
 ```{r}
-set.seed(123)
-trctrl <- trainControl(method = "repeatedcv", number=5, repeats=3)
-life_rf <- expand.grid(mtry=c(1:15))
+#Creating train controls that will be applied to all models.
+tr_control <- trainControl(method = "cv", number = 5)
+
+#Creating first linear regression model.
+mlrfit1 <- train(shares ~ kw_avg_avg + num_videos + num_imgs + num_videos*num_imgs, 
+                 data = train_life, 
+                 method = "lm", 
+                 trControl = tr_control)
+
+#Test model on test data
+mlrfit1_pred <- predict(mlrfit1, newdata = test_life)
+output1 <- postResample(mlrfit1_pred, test_life$shares)
+
+#Save RMSE for comparison
+RMSE1 <- output1[1]
+```
+
+Our second linear regression model will include all predictive variables as only "main effect" terms:
+
+E(*Shares*) = $\beta_0$ + $\beta_1 \times$(*Number of Words in Title*) + $\beta_2 \times$(*Number of Words in Content*)...
+
+```{r, eval = T, message = F, warning = F}
+#Creating second linear regression model.
+mlrfit2 <- train(shares ~ ., 
+                 data = train_life, 
+                 method = "lm", 
+                 trControl = tr_control)
+
+#Test model on test data
+mlrfit2_pred <- predict(mlrfit2, newdata = test_life)
+output2 <- postResample(mlrfit2_pred, test_life$shares)
+
+#Save RMSE for comparison
+RMSE2 <- output2[1]
+```
+
+Now, we will try a random forest model. This kind of model randomly selects subsets of predictors from the training data and creates a set of decision trees for each subset. Then we have a vote for the prediction of our response variable from each decision tree. The average of all of those results is the overall prediction of the random forest model.
+
+```{r}
+#Create small tune grid around sqrt(ncol) for efficiency
+root_ncol = round(sqrt(ncol(train_life)))
+start = root_ncol - 2
+end = root_ncol + 2
+
+#Create model
 rforest <- train(shares ~ ., 
-               method='rf', 
-               trControl=trctrl, 
-               data=LifeTrain, 
-               preProcess=c("center", "scale"),
-               tuneGrid=life_rf)
-#predict the values for our response variable and compare it to our testing data. 
-rforest_pred <- predict(rforest, newdata = select(LifeTest, -shares))
-#a frequency of how many of each response there is. 
-rfpred <- confusionMatrix(rforest_pred, LifeTest$shares)
-rfpred
+               method = 'rf', 
+               trControl =  tr_control, 
+               data = train_life, 
+               preProcess = c("center", "scale"),
+               tuneGrid = expand.grid(mtry=c(start:end)))
+
+#Test model on test data.
+rforest_pred <- predict(rforest, newdata = test_life)
+output3 <- postResample(rforest_pred, test_life$shares)
+
+#Save RMSE for comparison
+RMSE3 <- output3[1]
+```
+
+Lastly, we will try a boosted tree model. This model has a very similar process to the random forest model. The main difference is that the decision trees are instead grown one after another, with each tree growing on a modified version of the data. The predictions of our response variable are then updated as the model progresses. Generally, this model is slower but more accurate than the random forest model. 
+
+```{r, eval = T, results = F}
+#Create Training model
+gbm <- train(shares ~ ., 
+               method = 'gbm', 
+               trControl = tr_control,
+               data = train_life, 
+               preProcess = c("center", "scale"),
+               tuneGrid = expand.grid(n.trees = c(25,50,100,150,200),
+                                     interaction.depth = c(1:4),
+                                     shrinkage = 0.1,
+                                     n.minobsinnode = 10))
+
+```
+
+```{r, eval = T}
+#Test model on test data.
+gbm_pred <- predict(gbm, newdata = test_life)
+output4 <- postResample(gbm_pred, test_life$shares)
+
+#Save RMSE for comparison
+RMSE4 <- output4[1]
 ```
 
 ## Comparison
+
+Now, we need to select the best model by comparing the RMSE of each model.
+
+```{r, eval = T}
+RMSE_list <- c(RMSE1, RMSE2, RMSE3, RMSE4)
+
+RMSE_compare <- function(RMSE_list) {
+  if (min(RMSE_list) == RMSE_list[1]) {
+    return(paste("We will choose the first linear regression model! The winning RMSE was:", round(min(RMSE_list), digits = 2)))
+  } else if (min(RMSE_list) == RMSE_list[2]) {
+    return(paste("We will choose the second linear regression model! The winning RMSE was:", round(min(RMSE_list), digits = 2)))
+  } else if (min(RMSE_list) == RMSE_list[3]) {
+    return(paste("We will choose the random forest model! The winning RMSE was:", round(min(RMSE_list), digits = 2)))
+  } else if (min(RMSE_list) == RMSE_list[4]) {
+    return(paste("We will choose the boosted tree model! The winning RMSE was:", round(min(RMSE_list), digits = 2)))
+  }
+}
+
+RMSE_compare(RMSE_list)
+```
+
+
+
+## Automation 
+
+Below, we simply wanted to show the code used to automate the creation of the documents.
+
+```{r, eval = F, echo = T}
+#Get channels
+channels <- unique(na.omit(subdata$channel))
+
+#Create filenames
+output_file <- paste0(channels, "Analysis.md")
+
+#Create lists of parameters
+params <- lapply(channels, FUN = function(x){list(channel = x)})
+
+#Put into data frame
+reports <- tibble(output_file, params)
+
+#Automate creation of documents
+apply(reports, MARGIN = 1,
+      FUN = function(x){
+        params = x[[2]]
+        print(params$channel)
+        render(input = "ST558_Proj2.Rmd", ,
+               output_format = "github_document", 
+               output_file = x[[1]], 
+               output_options = list(
+                    df_print = "default",
+                    toc = TRUE,
+                    number_sections = FALSE,
+                    keep_html = FALSE),
+               params = x[[2]])
+      })
+```
+
+
+
+
+
+
+
+
