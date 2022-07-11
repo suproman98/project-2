@@ -46,7 +46,7 @@ of each data channel below:
 - [Analysis of Tech articles](TechAnalysis.html)
 - [Analysis of Lifestyle articles](LifestyleAnalysis.html)
 - [Analysis of World articles](WorldAnalysis.html)
-- Social Media
+- [Analysis of Social Media articles](SocialMediaAnalysis.html)
 
 Below was the code we used to automate the creation of our documents. Keep in 
 mind that the `subdata` variable is needed for this to function, which we 
