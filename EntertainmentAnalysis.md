@@ -131,6 +131,7 @@ data_life$weekday <- as.factor(data_life$weekday)
 
 #Since we have already subset the data, let's remove the channel variable
 data_life <- data_life %>% select(-channel)
+head(data_life)
 ```
 
 ## Summarizations
@@ -197,33 +198,24 @@ kable(stats2, "simple",
       col.names = c("Weekday", "Average", "Median", "Std Dev"))
 ```
 
-| Weekday     |    Average |   Median |                                                                                                                                                                                                                                                                                                               Std Dev |
-|:------------|-----------:|---------:|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| Friday      |       3001 |     1200 |                                                                                                                                                                                                                                                                                                                  9068 |
-| Monday      |       2931 |     1100 |                                                                                                                                                                                                                                                                                                                  7176 |
-| Saturday    |       3416 |     1600 |                                                                                                                                                                                                                                                                                                                  6460 |
-| Sunday      |       3811 |     1700 |                                                                                                                                                                                                                                                                                                                  6197 |
-| Thursday    |       2882 |     1100 |                                                                                                                                                                                                                                                                                                                  9316 |
-| Tuesday     |       2708 |     1100 |                                                                                                                                                                                                                                                                                                                  6453 |
-| Wednesday   |       2855 |     1100 |                                                                                                                                                                                                                                                                                                                  8285 |
-| Here we are | looking to | see if c | ertain days have significantly different statistics than the overall statistics for `shares` that we observed above. These statistical summaries by `weekday` may benefit from the context of how many articles with above and below average numbers of shares were released on each day. Let’s look at that as well. |
+| Weekday   | Average | Median | Std Dev |
+|:----------|--------:|-------:|--------:|
+| Friday    |    3001 |   1200 |    9068 |
+| Monday    |    2931 |   1100 |    7176 |
+| Saturday  |    3416 |   1600 |    6460 |
+| Sunday    |    3811 |   1700 |    6197 |
+| Thursday  |    2882 |   1100 |    9316 |
+| Tuesday   |    2708 |   1100 |    6453 |
+| Wednesday |    2855 |   1100 |    8285 |
+
+Here we are looking to see if certain days have significantly different
+statistics than the overall statistics for `shares` that we observed
+above. These statistical summaries by `weekday` may benefit from the
+context of how many articles with above and below average numbers of
+shares were released on each day. Let’s look at that as well.
 
 ``` r
 stats3 <- table(data_life$weekday, data_life$shares_cat)
-stats3
-```
-
-    ##            
-    ##             Above Average Below Average
-    ##   Friday              172           800
-    ##   Monday              235          1123
-    ##   Saturday             86           294
-    ##   Sunday              169           367
-    ##   Thursday            211          1020
-    ##   Tuesday             204          1081
-    ##   Wednesday           213          1082
-
-``` r
 kable(stats3, "simple")
 ```
 
@@ -271,53 +263,53 @@ cor <- cor %>%
 kable(cor, "simple")
 ```
 
-|                                 | Correlation |
-|---------------------------------|------------:|
-| shares                          |   1.0000000 |
-| kw\_avg\_avg                    |   0.1742764 |
-| kw\_max\_avg                    |   0.1596356 |
-| kw\_max\_min                    |   0.1398467 |
-| kw\_avg\_min                    |   0.1198875 |
-| self\_reference\_avg\_sharess   |   0.0953365 |
-| self\_reference\_min\_shares    |   0.0786484 |
-| self\_reference\_max\_shares    |   0.0742809 |
-| num\_hrefs                      |   0.0467648 |
-| num\_keywords                   |   0.0397448 |
-| num\_imgs                       |   0.0380930 |
-| global\_subjectivity            |   0.0375108 |
-| kw\_avg\_max                    |   0.0364916 |
-| LDA\_03                         |   0.0339480 |
-| kw\_min\_avg                    |   0.0282787 |
-| title\_subjectivity             |   0.0252049 |
-| abs\_title\_sentiment\_polarity |   0.0251392 |
-| avg\_positive\_polarity         |   0.0240712 |
-| min\_positive\_polarity         |   0.0237989 |
-| global\_sentiment\_polarity     |   0.0195428 |
-| kw\_max\_max                    |   0.0135252 |
-| n\_tokens\_content              |   0.0112218 |
-| average\_token\_length          |   0.0099917 |
-| n\_tokens\_title                |   0.0090660 |
-| max\_positive\_polarity         |   0.0069402 |
-| rate\_positive\_words           |   0.0054005 |
-| n\_unique\_tokens               |   0.0045515 |
-| n\_non\_stop\_words             |   0.0044382 |
-| n\_non\_stop\_unique\_tokens    |   0.0042684 |
-| num\_videos                     |  -0.0005864 |
-| title\_sentiment\_polarity      |  -0.0027982 |
-| kw\_min\_min                    |  -0.0030881 |
-| abs\_title\_subjectivity        |  -0.0034766 |
-| kw\_min\_max                    |  -0.0056581 |
-| min\_negative\_polarity         |  -0.0059006 |
-| rate\_negative\_words           |  -0.0067787 |
-| LDA\_01                         |  -0.0094805 |
-| avg\_negative\_polarity         |  -0.0105765 |
-| num\_self\_hrefs                |  -0.0114697 |
-| max\_negative\_polarity         |  -0.0120302 |
-| global\_rate\_negative\_words   |  -0.0136062 |
-| LDA\_04                         |  -0.0170663 |
-| global\_rate\_positive\_words   |  -0.0184417 |
-| LDA\_00                         |  -0.0306497 |
-| LDA\_02                         |  -0.0308185 |
+|                              | Correlation |
+|------------------------------|------------:|
+| shares                       |   1.0000000 |
+| kw_avg_avg                   |   0.1742764 |
+| kw_max_avg                   |   0.1596356 |
+| kw_max_min                   |   0.1398467 |
+| kw_avg_min                   |   0.1198875 |
+| self_reference_avg_sharess   |   0.0953365 |
+| self_reference_min_shares    |   0.0786484 |
+| self_reference_max_shares    |   0.0742809 |
+| num_hrefs                    |   0.0467648 |
+| num_keywords                 |   0.0397448 |
+| num_imgs                     |   0.0380930 |
+| global_subjectivity          |   0.0375108 |
+| kw_avg_max                   |   0.0364916 |
+| LDA_03                       |   0.0339480 |
+| kw_min_avg                   |   0.0282787 |
+| title_subjectivity           |   0.0252049 |
+| abs_title_sentiment_polarity |   0.0251392 |
+| avg_positive_polarity        |   0.0240712 |
+| min_positive_polarity        |   0.0237989 |
+| global_sentiment_polarity    |   0.0195428 |
+| kw_max_max                   |   0.0135252 |
+| n_tokens_content             |   0.0112218 |
+| average_token_length         |   0.0099917 |
+| n_tokens_title               |   0.0090660 |
+| max_positive_polarity        |   0.0069402 |
+| rate_positive_words          |   0.0054005 |
+| n_unique_tokens              |   0.0045515 |
+| n_non_stop_words             |   0.0044382 |
+| n_non_stop_unique_tokens     |   0.0042684 |
+| num_videos                   |  -0.0005864 |
+| title_sentiment_polarity     |  -0.0027982 |
+| kw_min_min                   |  -0.0030881 |
+| abs_title_subjectivity       |  -0.0034766 |
+| kw_min_max                   |  -0.0056581 |
+| min_negative_polarity        |  -0.0059006 |
+| rate_negative_words          |  -0.0067787 |
+| LDA_01                       |  -0.0094805 |
+| avg_negative_polarity        |  -0.0105765 |
+| num_self_hrefs               |  -0.0114697 |
+| max_negative_polarity        |  -0.0120302 |
+| global_rate_negative_words   |  -0.0136062 |
+| LDA_04                       |  -0.0170663 |
+| global_rate_positive_words   |  -0.0184417 |
+| LDA_00                       |  -0.0306497 |
+| LDA_02                       |  -0.0308185 |
 
 Of course, the shares variable has a perfect correlation with itself.
 What we are looking for here are the other variables with strong
@@ -487,9 +479,18 @@ the test data.
 
 Our first linear regression model is as follows:
 
-E(*Shares*) = *β*<sub>0</sub> + *β*<sub>1</sub>×(*Average Keywords*) +
-*β*<sub>2</sub>×(*Number of Images*) + *β*<sub>3</sub>×(*Number of
-Videos*) + *β*<sub>4</sub>×(*Number of Videos*)×(*Number of Images*)
+E(*Shares*) =
+![\\beta_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_0 "\beta_0") +
+![\\beta_1 \\times](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_1%20%5Ctimes "\beta_1 \times")(*Average
+Keywords*) +
+![\\beta_2 \\times](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_2%20%5Ctimes "\beta_2 \times")(*Number
+of Images*) +
+![\\beta_3 \\times](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_3%20%5Ctimes "\beta_3 \times")(*Number
+of Videos*) +
+![\\beta_4 \\times](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_4%20%5Ctimes "\beta_4 \times")(*Number
+of
+Videos*)![\\times](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Ctimes "\times")(*Number
+of Images*)
 
 ``` r
 #Creating train controls that will be applied to all models.
@@ -512,8 +513,12 @@ RMSE1 <- output1[1]
 Our second linear regression model will include all predictive variables
 as only “main effect” terms:
 
-E(*Shares*) = *β*<sub>0</sub> + *β*<sub>1</sub>×(*Number of Words in
-Title*) + *β*<sub>2</sub>×(*Number of Words in Content*)…
+E(*Shares*) =
+![\\beta_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_0 "\beta_0") +
+![\\beta_1 \\times](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_1%20%5Ctimes "\beta_1 \times")(*Number
+of Words in Title*) +
+![\\beta_2 \\times](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_2%20%5Ctimes "\beta_2 \times")(*Number
+of Words in Content*)…
 
 ``` r
 #Creating second linear regression model.
@@ -642,7 +647,8 @@ apply(reports, MARGIN = 1,
                output_options = list(
                     df_print = "default",
                     toc = TRUE,
-                    number_sections = FALSE),
+                    number_sections = FALSE,
+                    keep_html = FALSE),
                params = x[[2]])
       })
 ```

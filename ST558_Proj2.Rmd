@@ -41,6 +41,8 @@ We will likely focus heavily on the variables regarding LDA, statistics of share
 
 We will utilize various methods to model the response, including random forest, boosted tree, and linear regression models. 
 
+
+
 ## Data
 
 First, we will read in the data. Then, we will subset the data based on the variable of interest, and then remove those variables from our analysis. We are going to create a new factored variable called `weekday` that merges all the `weekday_is` variables and labels articles by what day they were published. We will also remove the `url` and `timedelta` variables for the sake of our analysis as those are non-predictive.
@@ -112,7 +114,9 @@ data_life$weekday <- as.factor(data_life$weekday)
 
 #Since we have already subset the data, let's remove the channel variable
 data_life <- data_life %>% select(-channel)
+head(data_life)
 ```
+
 
 
 ## Summarizations
@@ -133,7 +137,7 @@ This helps us understand the number of shares an article within this channel nee
 
 Let's visualize this distribution of `shares`.
 
-```{r, fig.width=6, fig.height=3}
+```{r, fig.width = 9, fig.height = 7}
 plot1 <- ggplot(data_life, aes(x=shares)) + 
   geom_histogram(alpha = 0.5, aes(y = ..density..), bins = 100, boundary = 0) + 
   geom_density(alpha = 0.5, kernel = "gaussian", position = "stack") +
@@ -165,11 +169,11 @@ stats2 <- data_life %>%
 kable(stats2, "simple",
       col.names = c("Weekday", "Average", "Median", "Std Dev"))
 ```
+
 Here we are looking to see if certain days have significantly different statistics than the overall statistics for `shares` that we observed above. These statistical summaries by `weekday` may benefit from the context of how many articles with above and below average numbers of shares were released on each day. Let's look at that as well.
 
 ```{r, eval = T}
 stats3 <- table(data_life$weekday, data_life$shares_cat)
-stats3
 kable(stats3, "simple")
 ```
 
@@ -200,7 +204,6 @@ kable(cor, "simple")
 ```
 
 Of course, the shares variable has a perfect correlation with itself. What we are looking for here are the other variables with strong correlations (positive or negative) as those could be solid predictors for the `shares` variable. 
-
 
 Let's visualize the relationship between some of these numerical variables and `shares`. First, let's look at `shares` versus the number of words in the content of each article, colored by the text sentiment polarity.
 
@@ -234,7 +237,7 @@ We are looking for similar indicators as the previous plot: trends in the scatte
 
 Now let's take a different visualization approach and look at the distribution of the number of images, colored by if the articles have above or below the average number of shares.
 
-```{r, eval = T}
+```{r, eval = T, fig.width = 9, fig.height = 7}
 plot5 <- ggplot(data_life, aes(x = num_imgs, fill = shares_cat)) + 
   geom_histogram(alpha = 0.5, aes(y = ..density..), bins = 30, boundary = 0) + 
   geom_density(alpha = 0.5, position = "stack") +
@@ -247,7 +250,7 @@ plot5
 
 To see if the number of images is a significant predictor of `shares`, we are looking for a large difference in the density curves for the two categories. Let's perform this same visualization with the number of links per article.
 
-```{r, eval = T}
+```{r, eval = T, fig.width = 9, fig.height = 7}
 plot6 <- ggplot(data_life, aes(x = num_hrefs, fill = shares_cat)) + 
   geom_histogram(alpha = 0.5, aes(y = ..density..), bins = 30, boundary = 0) + 
   geom_density(alpha = 0.5, position = "stack") +
@@ -293,6 +296,8 @@ data_life <- data_life %>%
   select(-shares_cat)
 ```
 
+
+
 ## Modeling
 
 First, let's create the testing and training data needed to generate our models. We will be using a 70/30 training and testing split of our data.
@@ -307,6 +312,7 @@ test_life <- data_life[test, ]
 ```
 
 After splitting the data, we will be creating four unique models: two linear regression models and two ensemble models. 
+
 
 
 ### Four Fitted Models
@@ -404,6 +410,8 @@ output4 <- postResample(gbm_pred, test_life$shares)
 #Save RMSE for comparison
 RMSE4 <- output4[1]
 ```
+
+
 
 ## Comparison
 

@@ -152,7 +152,7 @@ kable(stats1, "simple",
 
 | Average | Median | Std Dev |
 |--------:|-------:|--------:|
-|    3072 |   1700 |    9024 |
+|    3629 |   2100 |    5524 |
 
 This helps us understand the number of shares an article within this
 channel needs to be considered above average, and so forth.
@@ -170,7 +170,7 @@ plot1 <- ggplot(data_life, aes(x=shares)) +
 plot1
 ```
 
-![](TechAnalysis_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 Looking at the width and height of the peak(s) of this plot can help us
 understand the distribution of `shares` a bit better.
@@ -200,13 +200,13 @@ kable(stats2, "simple",
 
 | Weekday   | Average | Median | Std Dev |
 |:----------|--------:|-------:|--------:|
-| Friday    |    3051 |   1800 |    5366 |
-| Monday    |    2821 |   1600 |    3915 |
-| Saturday  |    3615 |   2300 |    5410 |
-| Sunday    |    3936 |   2400 |    5710 |
-| Thursday  |    2745 |   1600 |    4165 |
-| Tuesday   |    2883 |   1600 |    4722 |
-| Wednesday |    3363 |   1600 |   18145 |
+| Friday    |    4013 |   2200 |    5846 |
+| Monday    |    4010 |   2300 |    6046 |
+| Saturday  |    3509 |   2400 |    4119 |
+| Sunday    |    4525 |   2500 |    6913 |
+| Thursday  |    3092 |   2000 |    3178 |
+| Tuesday   |    3503 |   1900 |    6854 |
+| Wednesday |    3509 |   2100 |    5204 |
 
 Here we are looking to see if certain days have significantly different
 statistics than the overall statistics for `shares` that we observed
@@ -221,13 +221,13 @@ kable(stats3, "simple")
 
 |           | Above Average | Below Average |
 |-----------|--------------:|--------------:|
-| Friday    |           247 |           742 |
-| Monday    |           295 |           940 |
-| Saturday  |           180 |           345 |
-| Sunday    |           152 |           244 |
-| Thursday  |           273 |          1037 |
-| Tuesday   |           334 |          1140 |
-| Wednesday |           322 |          1095 |
+| Friday    |            92 |           240 |
+| Monday    |           103 |           234 |
+| Saturday  |            46 |           134 |
+| Sunday    |            47 |            90 |
+| Thursday  |           110 |           353 |
+| Tuesday   |           112 |           346 |
+| Wednesday |           106 |           310 |
 
 Here we are looking to see if there are vastly different numbers of
 articles in either category released on certain days than others. Let’s
@@ -245,7 +245,7 @@ plot2 <- ggplot(data_life, aes(x=weekday, y=shares, fill=shares_cat)) +
 plot2
 ```
 
-![](TechAnalysis_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 Again, we are looking for weekdays that have much higher or lower
 numbers of shares than other days to help confirm if `weekday` might be
@@ -266,50 +266,50 @@ kable(cor, "simple")
 |                              | Correlation |
 |------------------------------|------------:|
 | shares                       |   1.0000000 |
-| num_hrefs                    |   0.0779286 |
-| n_tokens_content             |   0.0713642 |
-| kw_avg_avg                   |   0.0521578 |
-| num_videos                   |   0.0339398 |
-| rate_negative_words          |   0.0282105 |
-| kw_min_avg                   |   0.0245268 |
-| kw_max_avg                   |   0.0244197 |
-| max_negative_polarity        |   0.0241691 |
-| title_sentiment_polarity     |   0.0239414 |
-| abs_title_sentiment_polarity |   0.0236575 |
-| LDA_00                       |   0.0219629 |
-| global_rate_negative_words   |   0.0215341 |
-| max_positive_polarity        |   0.0213107 |
-| num_keywords                 |   0.0189454 |
-| title_subjectivity           |   0.0166475 |
-| kw_min_min                   |   0.0150338 |
-| self_reference_avg_sharess   |   0.0144814 |
-| self_reference_max_shares    |   0.0109886 |
-| self_reference_min_shares    |   0.0108253 |
-| LDA_03                       |   0.0096077 |
-| global_subjectivity          |   0.0094740 |
-| num_imgs                     |   0.0082241 |
-| avg_positive_polarity        |   0.0031415 |
-| kw_max_max                   |   0.0021059 |
-| LDA_02                       |   0.0006896 |
-| kw_max_min                   |   0.0003495 |
-| kw_avg_min                   |  -0.0005002 |
-| average_token_length         |  -0.0011889 |
-| num_self_hrefs               |  -0.0021853 |
-| n_tokens_title               |  -0.0032847 |
-| kw_min_max                   |  -0.0041790 |
-| n_non_stop_words             |  -0.0057836 |
-| LDA_01                       |  -0.0097696 |
-| kw_avg_max                   |  -0.0114642 |
-| LDA_04                       |  -0.0126743 |
-| abs_title_subjectivity       |  -0.0153650 |
-| global_rate_positive_words   |  -0.0193401 |
-| global_sentiment_polarity    |  -0.0236996 |
-| avg_negative_polarity        |  -0.0258332 |
-| min_positive_polarity        |  -0.0293111 |
-| rate_positive_words          |  -0.0293782 |
-| min_negative_polarity        |  -0.0303236 |
-| n_non_stop_unique_tokens     |  -0.0426336 |
-| n_unique_tokens              |  -0.0537806 |
+| LDA_00                       |   0.1072034 |
+| self_reference_avg_sharess   |   0.0982085 |
+| kw_avg_avg                   |   0.0963675 |
+| self_reference_min_shares    |   0.0917835 |
+| self_reference_max_shares    |   0.0728242 |
+| kw_min_avg                   |   0.0621283 |
+| kw_max_avg                   |   0.0587407 |
+| abs_title_sentiment_polarity |   0.0539871 |
+| rate_negative_words          |   0.0493394 |
+| n_tokens_content             |   0.0479593 |
+| title_subjectivity           |   0.0476371 |
+| global_rate_negative_words   |   0.0432612 |
+| kw_avg_min                   |   0.0429915 |
+| num_keywords                 |   0.0377689 |
+| kw_max_min                   |   0.0369274 |
+| kw_min_min                   |   0.0339553 |
+| LDA_04                       |   0.0224957 |
+| max_negative_polarity        |   0.0171450 |
+| title_sentiment_polarity     |   0.0162017 |
+| num_videos                   |   0.0158930 |
+| max_positive_polarity        |   0.0073865 |
+| n_non_stop_words             |   0.0057773 |
+| n_tokens_title               |  -0.0067842 |
+| abs_title_subjectivity       |  -0.0070615 |
+| global_rate_positive_words   |  -0.0072252 |
+| global_subjectivity          |  -0.0075856 |
+| average_token_length         |  -0.0160341 |
+| num_hrefs                    |  -0.0202381 |
+| num_self_hrefs               |  -0.0230023 |
+| kw_max_max                   |  -0.0251146 |
+| kw_avg_max                   |  -0.0301259 |
+| LDA_03                       |  -0.0324451 |
+| num_imgs                     |  -0.0347965 |
+| avg_positive_polarity        |  -0.0385212 |
+| rate_positive_words          |  -0.0416205 |
+| kw_min_max                   |  -0.0433337 |
+| avg_negative_polarity        |  -0.0497409 |
+| global_sentiment_polarity    |  -0.0559194 |
+| LDA_01                       |  -0.0598666 |
+| n_non_stop_unique_tokens     |  -0.0694672 |
+| min_positive_polarity        |  -0.0770351 |
+| LDA_02                       |  -0.0809887 |
+| n_unique_tokens              |  -0.0839476 |
+| min_negative_polarity        |  -0.0960720 |
 
 Of course, the shares variable has a perfect correlation with itself.
 What we are looking for here are the other variables with strong
@@ -332,7 +332,7 @@ plot3 <- ggplot(data_life, aes(x = n_tokens_content, y = shares, color = global_
 plot3
 ```
 
-![](TechAnalysis_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 Here, we are looking for trends in the scatter plot along with potential
 clusters of different clusters to help us decipher if these numerical
@@ -352,7 +352,7 @@ plot4 <- ggplot(data_life, aes(x=num_videos, y=shares, color=global_subjectivity
 plot4
 ```
 
-![](TechAnalysis_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 We are looking for similar indicators as the previous plot: trends in
 the scatter plot and clusters of certain colors that show dependence of
@@ -373,7 +373,7 @@ plot5 <- ggplot(data_life, aes(x = num_imgs, fill = shares_cat)) +
 plot5
 ```
 
-![](TechAnalysis_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 To see if the number of images is a significant predictor of `shares`,
 we are looking for a large difference in the density curves for the two
@@ -391,7 +391,7 @@ plot6 <- ggplot(data_life, aes(x = num_hrefs, fill = shares_cat)) +
 plot6
 ```
 
-![](TechAnalysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 Again, we are looking to see if the density curves of this variable are
 vastly different between the different categories of `shares`.
@@ -413,8 +413,8 @@ kable(stats4, "simple",
 
 | Shares Category | Average |   Median | Std Dev |
 |:----------------|--------:|---------:|--------:|
-| Above Average   |   4.581 | 4.596405 |   0.406 |
-| Below Average   |   4.582 | 4.590909 |   0.330 |
+| Above Average   |   4.609 | 4.631681 |   0.445 |
+| Below Average   |   4.641 | 4.666377 |   0.406 |
 
 We are looking to see if the summary statistics in each category here
 are vastly different in order to determine if the average length of
@@ -432,8 +432,8 @@ kable(stats5, "simple",
 
 | Shares Category | Average | Median | Std Dev |
 |:----------------|--------:|-------:|--------:|
-| Above Average   |   7.852 |      8 |   1.737 |
-| Below Average   |   7.751 |      8 |   1.705 |
+| Above Average   |   6.752 |      7 |   2.043 |
+| Below Average   |   6.480 |      7 |   2.237 |
 
 Again, here we could claim the number of key words in an article could
 be a solid predictor of `shares` if these summary statistics vary
@@ -616,7 +616,7 @@ RMSE_compare <- function(RMSE_list) {
 RMSE_compare(RMSE_list)
 ```
 
-    ## [1] "We will choose the first linear regression model! The winning RMSE was: 3895.18"
+    ## [1] "We will choose the first linear regression model! The winning RMSE was: 6104.06"
 
 ## Automation
 
