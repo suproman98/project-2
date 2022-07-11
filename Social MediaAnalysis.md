@@ -170,7 +170,7 @@ plot1 <- ggplot(data_life, aes(x=shares)) +
 plot1
 ```
 
-![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 Looking at the width and height of the peak(s) of this plot can help us
 understand the distribution of `shares` a bit better.
@@ -245,7 +245,7 @@ plot2 <- ggplot(data_life, aes(x=weekday, y=shares, fill=shares_cat)) +
 plot2
 ```
 
-![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 Again, we are looking for weekdays that have much higher or lower
 numbers of shares than other days to help confirm if `weekday` might be
@@ -263,53 +263,53 @@ cor <- cor %>%
 kable(cor, "simple")
 ```
 
-|                              | Correlation |
-|------------------------------|------------:|
-| shares                       |   1.0000000 |
-| LDA_00                       |   0.1072034 |
-| self_reference_avg_sharess   |   0.0982085 |
-| kw_avg_avg                   |   0.0963675 |
-| self_reference_min_shares    |   0.0917835 |
-| self_reference_max_shares    |   0.0728242 |
-| kw_min_avg                   |   0.0621283 |
-| kw_max_avg                   |   0.0587407 |
-| abs_title_sentiment_polarity |   0.0539871 |
-| rate_negative_words          |   0.0493394 |
-| n_tokens_content             |   0.0479593 |
-| title_subjectivity           |   0.0476371 |
-| global_rate_negative_words   |   0.0432612 |
-| kw_avg_min                   |   0.0429915 |
-| num_keywords                 |   0.0377689 |
-| kw_max_min                   |   0.0369274 |
-| kw_min_min                   |   0.0339553 |
-| LDA_04                       |   0.0224957 |
-| max_negative_polarity        |   0.0171450 |
-| title_sentiment_polarity     |   0.0162017 |
-| num_videos                   |   0.0158930 |
-| max_positive_polarity        |   0.0073865 |
-| n_non_stop_words             |   0.0057773 |
-| n_tokens_title               |  -0.0067842 |
-| abs_title_subjectivity       |  -0.0070615 |
-| global_rate_positive_words   |  -0.0072252 |
-| global_subjectivity          |  -0.0075856 |
-| average_token_length         |  -0.0160341 |
-| num_hrefs                    |  -0.0202381 |
-| num_self_hrefs               |  -0.0230023 |
-| kw_max_max                   |  -0.0251146 |
-| kw_avg_max                   |  -0.0301259 |
-| LDA_03                       |  -0.0324451 |
-| num_imgs                     |  -0.0347965 |
-| avg_positive_polarity        |  -0.0385212 |
-| rate_positive_words          |  -0.0416205 |
-| kw_min_max                   |  -0.0433337 |
-| avg_negative_polarity        |  -0.0497409 |
-| global_sentiment_polarity    |  -0.0559194 |
-| LDA_01                       |  -0.0598666 |
-| n_non_stop_unique_tokens     |  -0.0694672 |
-| min_positive_polarity        |  -0.0770351 |
-| LDA_02                       |  -0.0809887 |
-| n_unique_tokens              |  -0.0839476 |
-| min_negative_polarity        |  -0.0960720 |
+|                                 | Correlation |
+|---------------------------------|------------:|
+| shares                          |   1.0000000 |
+| LDA\_00                         |   0.1072034 |
+| self\_reference\_avg\_sharess   |   0.0982085 |
+| kw\_avg\_avg                    |   0.0963675 |
+| self\_reference\_min\_shares    |   0.0917835 |
+| self\_reference\_max\_shares    |   0.0728242 |
+| kw\_min\_avg                    |   0.0621283 |
+| kw\_max\_avg                    |   0.0587407 |
+| abs\_title\_sentiment\_polarity |   0.0539871 |
+| rate\_negative\_words           |   0.0493394 |
+| n\_tokens\_content              |   0.0479593 |
+| title\_subjectivity             |   0.0476371 |
+| global\_rate\_negative\_words   |   0.0432612 |
+| kw\_avg\_min                    |   0.0429915 |
+| num\_keywords                   |   0.0377689 |
+| kw\_max\_min                    |   0.0369274 |
+| kw\_min\_min                    |   0.0339553 |
+| LDA\_04                         |   0.0224957 |
+| max\_negative\_polarity         |   0.0171450 |
+| title\_sentiment\_polarity      |   0.0162017 |
+| num\_videos                     |   0.0158930 |
+| max\_positive\_polarity         |   0.0073865 |
+| n\_non\_stop\_words             |   0.0057773 |
+| n\_tokens\_title                |  -0.0067842 |
+| abs\_title\_subjectivity        |  -0.0070615 |
+| global\_rate\_positive\_words   |  -0.0072252 |
+| global\_subjectivity            |  -0.0075856 |
+| average\_token\_length          |  -0.0160341 |
+| num\_hrefs                      |  -0.0202381 |
+| num\_self\_hrefs                |  -0.0230023 |
+| kw\_max\_max                    |  -0.0251146 |
+| kw\_avg\_max                    |  -0.0301259 |
+| LDA\_03                         |  -0.0324451 |
+| num\_imgs                       |  -0.0347965 |
+| avg\_positive\_polarity         |  -0.0385212 |
+| rate\_positive\_words           |  -0.0416205 |
+| kw\_min\_max                    |  -0.0433337 |
+| avg\_negative\_polarity         |  -0.0497409 |
+| global\_sentiment\_polarity     |  -0.0559194 |
+| LDA\_01                         |  -0.0598666 |
+| n\_non\_stop\_unique\_tokens    |  -0.0694672 |
+| min\_positive\_polarity         |  -0.0770351 |
+| LDA\_02                         |  -0.0809887 |
+| n\_unique\_tokens               |  -0.0839476 |
+| min\_negative\_polarity         |  -0.0960720 |
 
 Of course, the shares variable has a perfect correlation with itself.
 What we are looking for here are the other variables with strong
@@ -332,7 +332,7 @@ plot3 <- ggplot(data_life, aes(x = n_tokens_content, y = shares, color = global_
 plot3
 ```
 
-![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 Here, we are looking for trends in the scatter plot along with potential
 clusters of different clusters to help us decipher if these numerical
@@ -352,7 +352,7 @@ plot4 <- ggplot(data_life, aes(x=num_videos, y=shares, color=global_subjectivity
 plot4
 ```
 
-![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 We are looking for similar indicators as the previous plot: trends in
 the scatter plot and clusters of certain colors that show dependence of
@@ -373,7 +373,7 @@ plot5 <- ggplot(data_life, aes(x = num_imgs, fill = shares_cat)) +
 plot5
 ```
 
-![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 To see if the number of images is a significant predictor of `shares`,
 we are looking for a large difference in the density curves for the two
@@ -391,7 +391,7 @@ plot6 <- ggplot(data_life, aes(x = num_hrefs, fill = shares_cat)) +
 plot6
 ```
 
-![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](Social%20MediaAnalysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 Again, we are looking to see if the density curves of this variable are
 vastly different between the different categories of `shares`.
@@ -479,18 +479,9 @@ the test data.
 
 Our first linear regression model is as follows:
 
-E(*Shares*) =
-![\\beta_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_0 "\beta_0") +
-![\\beta_1 \\times](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_1%20%5Ctimes "\beta_1 \times")(*Average
-Keywords*) +
-![\\beta_2 \\times](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_2%20%5Ctimes "\beta_2 \times")(*Number
-of Images*) +
-![\\beta_3 \\times](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_3%20%5Ctimes "\beta_3 \times")(*Number
-of Videos*) +
-![\\beta_4 \\times](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_4%20%5Ctimes "\beta_4 \times")(*Number
-of
-Videos*)![\\times](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Ctimes "\times")(*Number
-of Images*)
+E(*Shares*) = *β*<sub>0</sub> + *β*<sub>1</sub>×(*Average Keywords*) +
+*β*<sub>2</sub>×(*Number of Images*) + *β*<sub>3</sub>×(*Number of
+Videos*) + *β*<sub>4</sub>×(*Number of Videos*)×(*Number of Images*)
 
 ``` r
 #Creating train controls that will be applied to all models.
@@ -513,12 +504,8 @@ RMSE1 <- output1[1]
 Our second linear regression model will include all predictive variables
 as only “main effect” terms:
 
-E(*Shares*) =
-![\\beta_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_0 "\beta_0") +
-![\\beta_1 \\times](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_1%20%5Ctimes "\beta_1 \times")(*Number
-of Words in Title*) +
-![\\beta_2 \\times](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_2%20%5Ctimes "\beta_2 \times")(*Number
-of Words in Content*)…
+E(*Shares*) = *β*<sub>0</sub> + *β*<sub>1</sub>×(*Number of Words in
+Title*) + *β*<sub>2</sub>×(*Number of Words in Content*)…
 
 ``` r
 #Creating second linear regression model.
@@ -640,7 +627,6 @@ reports <- tibble(output_file, params)
 apply(reports, MARGIN = 1,
       FUN = function(x){
         params = x[[2]]
-        print(params$channel)
         render(input = "ST558_Proj2.Rmd", ,
                output_format = "github_document", 
                output_file = x[[1]], 

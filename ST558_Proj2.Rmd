@@ -458,8 +458,7 @@ reports <- tibble(output_file, params)
 apply(reports, MARGIN = 1,
       FUN = function(x){
         params = x[[2]]
-        print(params$channel)
-        render(input = "ST558_Proj2.Rmd", ,
+        render(input = "ST558_Proj2.Rmd" ,
                output_format = "github_document", 
                output_file = x[[1]], 
                output_options = list(
